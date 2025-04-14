@@ -1,3 +1,10 @@
+name: Continuous Integration
+
+on:
+  pull_request:
+    branches:
+      - main
+
 jobs:
   automation-test-job:
     runs-on: ubuntu-latest
