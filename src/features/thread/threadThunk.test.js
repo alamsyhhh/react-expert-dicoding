@@ -8,7 +8,6 @@ describe('threadSlice reducer', () => {
   it('should handle fetchAllThreads fulfilled', async () => {
     const dummyThreads = [{ id: 1, title: 'Test thread' }]
 
-    // Mock fetchAllThreadsAPI untuk mengembalikan dummyThreads
     vi.spyOn(api, 'fetchAllThreadsAPI').mockResolvedValueOnce({
       data: { threads: dummyThreads }
     })

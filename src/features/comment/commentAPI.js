@@ -44,6 +44,7 @@ export const voteCommentAPI = async ({ threadId, commentId, type }) => {
   })
 
   const data = await res.json()
+  console.log('Vote response:', data)
   if (!res.ok) throw new Error(data.message || 'Gagal melakukan voting')
 
   return data.data.vote

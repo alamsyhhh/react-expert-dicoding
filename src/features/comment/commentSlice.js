@@ -30,15 +30,44 @@ const commentSlice = createSlice({
     loading: false,
     successMessage: null,
     errorMessage: null,
-    newComment: null
+    newComment: null,
+    comments: []
   },
   reducers: {
     resetCommentState: (state) => {
       state.successMessage = null
       state.errorMessage = null
       state.newComment = null
+    },
+    voteCommentOptimistic: (state, action) => {
+      const { commentId, userId, voteType } = action.payload
+      const comment = state.newComment?.comments?.find(
+        (c) => c.id === commentId
+      )
+      if (comment) {
+        if (voteType === 'up') {
+          comment.downVotesBy = comment.downVotesBy.filter(
+            (id) => id !== userId
+          )
+          if (comment.upVotesBy.includes(userId)) {
+            comment.upVotesBy = comment.upVotesBy.filter((id) => id !== userId)
+          } else {
+            comment.upVotesBy.push(userId)
+          }
+        } else if (voteType === 'down') {
+          comment.upVotesBy = comment.upVotesBy.filter((id) => id !== userId)
+          if (comment.downVotesBy.includes(userId)) {
+            comment.downVotesBy = comment.downVotesBy.filter(
+              (id) => id !== userId
+            )
+          } else {
+            comment.downVotesBy.push(userId)
+          }
+        }
+      }
     }
   },
+
   extraReducers: (builder) => {
     builder
       .addCase(createComment.pending, (state) => {
@@ -58,5 +87,6 @@ const commentSlice = createSlice({
   }
 })
 
-export const { resetCommentState } = commentSlice.actions
+export const { resetCommentState, voteCommentOptimistic } =
+  commentSlice.actions
 export default commentSlice.reducer

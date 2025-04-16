@@ -9,7 +9,8 @@ import {
 import { useForm } from 'react-hook-form'
 import {
   createComment,
-  voteComment
+  voteComment,
+  voteCommentOptimistic
 } from '../../features/comment/commentSlice'
 import { yupResolver } from '@hookform/resolvers/yup'
 import * as yup from 'yup'
@@ -64,9 +65,22 @@ const ThreadDetailPage = () => {
 
   const onVoteComment = async (commentId, type) => {
     if (!authUser) return alert('Harap login terlebih dahulu!')
-    await dispatch(
-      voteComment({ threadId: id, commentId, type, token: authUser.token })
+
+    dispatch(
+      voteCommentOptimistic({
+        commentId,
+        userId: authUser.id,
+        voteType: type
+      })
     )
+
+    try {
+      await dispatch(
+        voteComment({ threadId: id, commentId, type, token: authUser.token })
+      )
+    } catch (error) {
+      alert('Gagal vote komentar: ' + error.message)
+    }
     dispatch(fetchThreadDetail(id))
   }
 
@@ -201,28 +215,22 @@ const ThreadDetailPage = () => {
                 className="p-4 border border-gray-200 rounded-lg shadow-sm bg-gray-50"
               >
                 <div className="flex items-center mb-1 space-x-2 text-sm text-gray-500">
-                  {comment.owner?.avatar && (
-                    <img
-                      src={comment.owner.avatar}
-                      alt={comment.owner.name}
-                      className="object-cover w-6 h-6 rounded-full"
-                    />
-                  )}
-                  <span>{comment.owner?.name}</span>
-                  <span>•</span>
-                  <span>{formatDate(comment.createdAt)}</span>
+                  <img
+                    src={comment.owner.avatar}
+                    alt={comment.owner.name}
+                    className="w-6 h-6 rounded-full"
+                  />
+                  <span>{comment.owner.name}</span>
                 </div>
-                <div
-                  className="text-sm text-gray-800"
-                  dangerouslySetInnerHTML={{ __html: comment.content }}
-                />
-                <div className="flex items-center gap-3 mt-2 text-sm">
+                <p className="mb-2 text-sm text-gray-800">{comment.content}</p>
+
+                <div className="flex items-center gap-3 text-sm">
                   <button
                     onClick={() => onVoteComment(comment.id, 'up')}
-                    className={`flex items-center gap-1 transition rounded-full px-2 py-1 ${
+                    className={`flex items-center gap-1 ${
                       isVoted(comment.upVotesBy)
-                        ? 'bg-blue-100 text-blue-600'
-                        : 'hover:bg-blue-50 text-gray-600'
+                        ? 'text-blue-600'
+                        : 'text-gray-500'
                     }`}
                   >
                     {isVoted(comment.upVotesBy)
@@ -236,10 +244,10 @@ const ThreadDetailPage = () => {
                   </button>
                   <button
                     onClick={() => onVoteComment(comment.id, 'down')}
-                    className={`flex items-center gap-1 transition rounded-full px-2 py-1 ${
+                    className={`flex items-center gap-1 ${
                       isVoted(comment.downVotesBy)
-                        ? 'bg-red-100 text-red-600'
-                        : 'hover:bg-red-50 text-gray-600'
+                        ? 'text-red-600'
+                        : 'text-gray-500'
                     }`}
                   >
                     {isVoted(comment.downVotesBy)

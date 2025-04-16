@@ -11,8 +11,8 @@
     "preview": "vite preview",
     "test": "vitest",
     "cypress:open": "cypress open",
-    "cypress:run": "cypress run",
-    "ci:test": "vitest --no-watch && start-server-and-test dev http-get://0.0.0.0:5173 cypress:run"
+    "e2e": "cypress run",
+    "ci:test": "vitest --no-watch && start-server-and-test dev http-get://0.0.0.0:5173 e2e"
   },
   "dependencies": {
     "@hookform/resolvers": "^4.1.3",

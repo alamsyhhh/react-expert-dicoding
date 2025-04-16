@@ -32,6 +32,6 @@ describe('Login Flow Test', () => {
     cy.get('button[type="submit"]').click()
 
     // 3. Verifikasi pesan error tampil
-    cy.contains('email or password is wrong').should('exist')
+    cy.contains('email or password is wrongg').should('exist')
   })
 })
