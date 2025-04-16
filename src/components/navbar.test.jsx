@@ -5,7 +5,6 @@ import { MemoryRouter } from 'react-router-dom'
 import Navbar from './navbar'
 import Cookies from 'js-cookie'
 
-// Mock useNavigate dari react-router-dom
 const mockNavigate = vi.fn()
 vi.mock('react-router-dom', async () => {
   const actual = await vi.importActual('react-router-dom')
@@ -16,7 +15,6 @@ vi.mock('react-router-dom', async () => {
 })
 
 describe('Navbar', () => {
-  // Reset mock sebelum setiap pengujian
   beforeEach(() => {
     vi.clearAllMocks()
   })
